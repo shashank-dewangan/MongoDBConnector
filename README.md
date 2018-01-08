@@ -4,6 +4,7 @@ Basic method use for Insert/Update/Remove operation on MongoDB collection
 
 Check : Program.cs
 
+## Open soltion in VS 2015
 ## Install Packages 
 MongoDB.Bson 
 
