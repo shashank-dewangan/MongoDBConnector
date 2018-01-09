@@ -31,12 +31,22 @@ namespace MongoDBConnector
         
         public virtual List<BsonDocument> GetRecordByName(string name, IMongoCollection<BsonDocument> _collection)
         {
-            throw new NotImplementedException();
+            var findCriteria = string.Format("{{ 'name': '{0}'}}", name);
+
+            var result = Find(findCriteria, _collection);
+            var insuranceCompanyModels = result as IList<BsonDocument> ?? result.ToList();
+
+            return insuranceCompanyModels.ToList();
         }
 
         public virtual List<BsonDocument> GetRecordByNameAlias(string name, string alias, IMongoCollection<BsonDocument> _collection)
         {
-            throw new NotImplementedException();
+            var findCriteria = string.Format("{{ 'name': '{0}', 'alias': '{1}'}}", name, alias);
+
+            var result = Find(findCriteria, _collection);
+            var insuranceCompanyModels = result as IList<BsonDocument> ?? result.ToList();
+
+            return insuranceCompanyModels.ToList();
         }
     }
 }

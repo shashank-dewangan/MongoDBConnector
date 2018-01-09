@@ -38,23 +38,6 @@ namespace MongoDBConnector
                 Console.WriteLine(" Found record for : " + myObj.name + " aka " + myObj.alias + " " + (myObj.superpower ? "has super power" : ""));
             }
         }
-        public override List<BsonDocument> GetRecordByName(string name, IMongoCollection<BsonDocument> _collection)
-        {
-            var findCriteria = string.Format("{{ 'name': '{0}'}}", name);
-
-            var result = Find(findCriteria, _collection);
-            var insuranceCompanyModels = result as IList<BsonDocument> ?? result.ToList();
-
-            return insuranceCompanyModels.ToList();
-        }
-        public override List<BsonDocument> GetRecordByNameAlias(string name, string alias, IMongoCollection<BsonDocument> _collection)
-        {
-            var findCriteria = string.Format("{{ 'name': '{0}', 'alias': '{1}'}}", name, alias);
-
-            var result = Find(findCriteria, _collection);
-            var insuranceCompanyModels = result as IList<BsonDocument> ?? result.ToList();
-
-            return insuranceCompanyModels.ToList();
-        }
+        
     }
 }
