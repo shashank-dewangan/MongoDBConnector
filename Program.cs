@@ -71,6 +71,8 @@ namespace MongoDBConnector
 
                 BsonDocument[] multiData = { doc1, doc2, doc3 };
 
+                //BsonDocument[] multiData = objDBCollection.MultipleInputDataToInsert();
+
                 collection.InsertManyAsync(multiData);
 
                 //Update existing record

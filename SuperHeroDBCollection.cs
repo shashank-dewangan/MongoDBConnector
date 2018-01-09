@@ -38,6 +38,26 @@ namespace MongoDBConnector
                 Console.WriteLine(" Found record for : " + myObj.name + " aka " + myObj.alias + " " + (myObj.superpower ? "has super power" : ""));
             }
         }
-        
+        public override BsonDocument[] MultipleInputDataToInsert()
+        {
+            BsonDocument doc1 = new BsonDocument();
+            doc1.Add(new BsonElement("name", "Peter Parker"));
+            doc1.Add(new BsonElement("alias", "Spiderman"));
+            doc1.Add(new BsonElement("superpower", true));
+
+            BsonDocument doc2 = new BsonDocument();
+            doc2.Add(new BsonElement("name", "Clint Barton"));
+            doc2.Add(new BsonElement("alias", "Hawkeye"));
+            doc2.Add(new BsonElement("superpower", false));
+
+            BsonDocument doc3 = new BsonDocument();
+            doc3.Add(new BsonElement("name", "Bucky Barnes"));
+            doc3.Add(new BsonElement("alias", "Winter Soldier"));
+            doc3.Add(new BsonElement("superpower", true));
+
+            BsonDocument[] multiData = { doc1, doc2, doc3 };
+
+            return multiData;
+        }
     }
 }

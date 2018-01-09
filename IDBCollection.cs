@@ -16,5 +16,7 @@ namespace MongoDBConnector
         List<BsonDocument> GetRecordByName(string name, IMongoCollection<BsonDocument> _collection);
 
         List<BsonDocument> GetRecordByNameAlias(string name, string alias, IMongoCollection<BsonDocument> _collection);
+
+        BsonDocument[] MultipleInputDataToInsert();
     }
 }
