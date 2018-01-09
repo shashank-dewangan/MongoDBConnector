@@ -18,4 +18,3 @@ C:\Sample Projects\MongoDBInterface\MongoDBConnector\MongoDBConnector\bin\Debug\
 C:\Sample Projects\MongoDBInterface\MongoDBConnector\MongoDBConnector\bin\Debug\MongoDB.Driver.Core.xml
 C:\Sample Projects\MongoDBInterface\MongoDBConnector\MongoDBConnector\obj\Debug\MongoDBConnector.exe
 C:\Sample Projects\MongoDBInterface\MongoDBConnector\MongoDBConnector\obj\Debug\MongoDBConnector.pdb
-C:\Sample Projects\MongoDBInterface\MongoDBConnector\MongoDBConnector\obj\Debug\MongoDBConnector.csprojResolveAssemblyReference.cache

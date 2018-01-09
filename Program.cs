@@ -15,6 +15,11 @@ namespace MongoDBConnector
 {
     class Program
     {
+        static IDBCollection objDBCollection;
+        static Program()
+        {
+            objDBCollection = new SuperHeroDBCollection();
+        }
         static void Main(string[] args)
         {
             //format : mongodb://user:pwd@server/Database
@@ -28,7 +33,7 @@ namespace MongoDBConnector
                 var database = mClient.GetDatabase("MyDatabase");
                 var collection = database.GetCollection<BsonDocument>("Avengers");
 
-                DisplayRecords(collection);
+                objDBCollection.DisplayRecords(collection);
 
                 //Display the count
                 var query = collection.AsQueryable<BsonDocument>().ToList();
@@ -37,13 +42,17 @@ namespace MongoDBConnector
                 InsertOneOptions option = new InsertOneOptions();
 
                 //Insert a record
-                BsonDocument doc = new BsonDocument();
-                doc.Add(new BsonElement("name", "Wonda Maximoff"));
-                doc.Add(new BsonElement("alias", "Scarlet Witch"));
-                doc.Add(new BsonElement("superpower", true));
+                var foundResult = objDBCollection.GetRecordByName("Wonda Maximoff", collection);
 
-                collection.InsertOneAsync(doc);
+                if (foundResult.Count == 0)
+                {
+                    BsonDocument doc = new BsonDocument();
+                    doc.Add(new BsonElement("name", "Wonda Maximoff"));
+                    doc.Add(new BsonElement("alias", "Scarlet Witch"));
+                    doc.Add(new BsonElement("superpower", true));
 
+                    collection.InsertOneAsync(doc);
+                }
                 //Insert Many record
                 BsonDocument doc1 = new BsonDocument();
                 doc1.Add(new BsonElement("name", "Peter Parker"));
@@ -70,31 +79,33 @@ namespace MongoDBConnector
 
                 collection.UpdateOneAsync(filter, update);
 
-                DisplayRecords(collection);
+                objDBCollection.DisplayRecords(collection);
 
                 var filterToDelete = Builders<BsonDocument>.Filter.Eq("name", "Wonda Maximoff");
 
                 //Delete a record
                 collection.DeleteOneAsync(filterToDelete);
 
-                DisplayRecords(collection);
+                objDBCollection.DisplayRecords(collection);
 
                 //Find with single parameter
-                var result = GetByName("Tony Stark", collection);
+                var result = objDBCollection.GetRecordByName("Tony Stark", collection);
 
-                DisplayRecord(result);
+                objDBCollection.DisplayRecord(result);
 
                 ////Find with multiple parameter
-                var result2 = GetByNameAlias("Steve Rogers", "Captain America", collection);
+                var result2 = objDBCollection.GetRecordByNameAlias("Steve Rogers", "Captain America", collection);
 
-                DisplayRecord(result2);
+                objDBCollection.DisplayRecord(result2);
 
                 var filter1 = Builders<BsonDocument>.Filter.Eq("name", "Peter Parker");
                 var filter2 = Builders<BsonDocument>.Filter.Eq("name", "Clint Barton");
                 var filter3 = Builders<BsonDocument>.Filter.Eq("name", "Bucky Barnes");
+
                 collection.DeleteManyAsync(filter1);
                 collection.DeleteManyAsync(filter2);
                 collection.DeleteManyAsync(filter3);
+
             }
             catch (MongoClientException ex)
             {
@@ -111,57 +122,6 @@ namespace MongoDBConnector
             }
 
         }
-        public static List<BsonDocument> GetByName(string name, IMongoCollection<BsonDocument> _collection)
-        {
-            var findCriteria = string.Format("{{ 'name': '{0}'}}", name);
 
-            var result = Find(findCriteria, _collection);
-            var insuranceCompanyModels = result as IList<BsonDocument> ?? result.ToList();
-
-            return insuranceCompanyModels.ToList();
-        }
-
-        public static List<BsonDocument> GetByNameAlias(string name, string alias, IMongoCollection<BsonDocument> _collection)
-        {
-            var findCriteria = string.Format("{{ 'name': '{0}', 'alias': '{1}'}}", name, alias);
-
-            var result = Find(findCriteria, _collection);
-            var insuranceCompanyModels = result as IList<BsonDocument> ?? result.ToList();
-
-            return insuranceCompanyModels.ToList();
-        }
-
-        public static IEnumerable<BsonDocument> Find(string findCriteriaInJson, IMongoCollection<BsonDocument> _collection)
-        {
-            if (string.IsNullOrWhiteSpace(findCriteriaInJson))
-                throw new ArgumentException("findCriteriaInJson cannot be null or empty");
-            return (IEnumerable<BsonDocument>)_collection.Find<BsonDocument>((FilterDefinition<BsonDocument>)findCriteriaInJson, (FindOptions)null).ToListAsync<BsonDocument>(new CancellationToken()).Result;
-        }
-        static void DisplayRecords(IMongoCollection<BsonDocument> collection)
-        {
-            var query = collection.AsQueryable<BsonDocument>().ToList();
-
-            foreach (var item in query)
-            {
-                var myObj = BsonSerializer.Deserialize<MyClass>(item);
-                Console.WriteLine(myObj.name + " aka " + myObj.alias + " " + (myObj.superpower ? "with super power" : ""));
-            }
-        }
-        static void DisplayRecord(List<BsonDocument> records)
-        {
-            foreach (var record in records)
-            {
-                var myObj = BsonSerializer.Deserialize<MyClass>(record);
-                Console.WriteLine();
-                Console.WriteLine(" Found : " + myObj.name + " aka " + myObj.alias + " " + (myObj.superpower ? "with super power" : ""));
-            }
-        }
-    }
-    class MyClass
-    {
-        public ObjectId _id { get; set; }
-        public string name { get; set; }
-        public string alias { get; set; }
-        public bool superpower { get; set; }
     }
 }
